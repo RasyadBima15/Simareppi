@@ -90,7 +90,10 @@
                         <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file" name="file" type="file">
                         <p class="mt-1 text-sm text-gray-900 dark:text-gray-300" id="file_input_help">File yang diunggah harus bertipe file PDF.</p>
                         <div id="filePreview" class="mt-5">
-                            <embed src="{{ asset('storage/files/' . $item->file) }}" type="application/pdf" width="100%" height="500">
+                            @if ($item->file)
+                                <embed class="pr-6 pt-2" src="{{ asset('storage/files/' . $item->file) }}" type="application/pdf" width="100%" height="500">
+                            @endif
+                            <h6 class="text-xl font-semibold text-gray-900 dark:text-white">File Belum Ditambahkan.</h6>
                         </div>
                     </div> 
                     <button type="submit" class="w-full text-white bg-green-600 border hover:bg-green-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Edit Surat Keluar</button>

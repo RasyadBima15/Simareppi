@@ -86,20 +86,38 @@ class SuratController extends Controller
     }
     public function addIncomingMessage(Request $request){
         try {
-            $request->validate([
-                'no_surat' => 'required',
-                'tanggal_surat' => 'required',
-                'perihal' => 'required',
-                'dari' => 'required',
-                'kepada' => 'required',
-                'jenis_surat' => 'required',
-                'isi_surat' => 'required',
-                'disposisi_kapolda' => 'required',
-                'disposisi_karo_sdm' => 'required',
-                'file' => 'required|file|mimes:pdf',
-            ]);
-    
+            // Mengambil file dari formulir
+            $file = $request->file('file');
             $suratMasuk = new Surat_masuk();
+
+            if($file != null){
+                $request->validate([
+                    'no_surat' => 'required',
+                    'tanggal_surat' => 'required',
+                    'perihal' => 'required',
+                    'dari' => 'required',
+                    'kepada' => 'required',
+                    'jenis_surat' => 'required',
+                    'isi_surat' => 'required',
+                    'disposisi_kapolda' => 'required',
+                    'disposisi_karo_sdm' => 'required',
+                    'file' => 'required|file|mimes:pdf',
+                ]);
+                // Mendapatkan nama asli file
+                $filename = $file->getClientOriginalName();
+
+                $filepath = 'files/'. $filename;
+
+                // Menyimpan file ke dalam direktori 'photos' dengan nama yang sama seperti aslinya
+                if(!Storage::disk('public')->exists($filepath) && $file != null){
+                    $file->storeAs('files', $filename, 'public');
+                    // Menyimpan nama file ke dalam database
+                    $suratMasuk->file = $filename;
+                } else if (Storage::disk('public')->exists($filepath)) {
+                    // File sudah ada, berikan pemberitahuan
+                    return redirect()->back()->with('error', 'Gagal Menambahkan: File dengan nama tersebut sudah ada. Pilih file lain.');
+                }
+            }
             $suratMasuk->no_surat = $request->input('no_surat');
             $suratMasuk->tanggal_surat = date('d-m-Y', strtotime($request->input('tanggal_surat')));
             $suratMasuk->perihal = $request->input('perihal');
@@ -109,27 +127,7 @@ class SuratController extends Controller
             $suratMasuk->isi_surat = $request->input('isi_surat');
             $suratMasuk->disposisi_kapolda = $request->input('disposisi_kapolda');
             $suratMasuk->disposisi_karo_sdm = $request->input('disposisi_karo_sdm');
-    
-            // Mengambil file dari formulir
-            $file = $request->file('file');
-    
-            // Mendapatkan nama asli file
-            $filename = $file->getClientOriginalName();
 
-            $filepath = 'files/'. $filename;
-    
-            // Menyimpan file ke dalam direktori 'photos' dengan nama yang sama seperti aslinya
-            if(!Storage::disk('public')->exists($filepath)){
-                $file->storeAs('files', $filename, 'public');
-            } else if (Storage::disk('public')->exists($filepath)) {
-                // File sudah ada, berikan pemberitahuan
-                return redirect()->back()->with('error', 'Gagal Menambahkan: File dengan nama tersebut sudah ada. Pilih file lain.');
-            }
-
-            // Menyimpan nama file ke dalam database
-            $suratMasuk->file = $filename;
-
-    
             // Menyimpan record surat masuk ke database
             $suratMasuk->save();
     
@@ -141,18 +139,35 @@ class SuratController extends Controller
     }
     public function addOutgoingMessage(Request $request){
         try {
-            $request->validate([
-                'no_surat' => 'required',
-                'tanggal_surat' => 'required',
-                'perihal' => 'required',
-                'dari' => 'required',
-                'kepada' => 'required',
-                'jenis_surat' => 'required',
-                'isi_surat' => 'required',
-                'file' => 'required|file|mimes:pdf',
-            ]);
-    
+            $file = $request->file('file');
             $suratKeluar = new Surat_keluar();
+
+            if($file != null){
+                $request->validate([
+                    'no_surat' => 'required',
+                    'tanggal_surat' => 'required',
+                    'perihal' => 'required',
+                    'dari' => 'required',
+                    'kepada' => 'required',
+                    'jenis_surat' => 'required',
+                    'isi_surat' => 'required',
+                    'file' => 'required|file|mimes:pdf',
+                ]);
+                // Mendapatkan nama asli file
+                $filename = $file->getClientOriginalName();
+
+                $filepath = 'files/'. $filename;
+        
+                // Menyimpan file ke dalam direktori 'photos' dengan nama yang sama seperti aslinya
+                if(!Storage::disk('public')->exists($filepath) && $file){
+                    $file->storeAs('files', $filename, 'public');
+                    // Menyimpan nama file ke dalam database
+                    $suratKeluar->file = $filename;
+                } else if (Storage::disk('public')->exists($filepath)) {
+                    // File sudah ada, berikan pemberitahuan
+                    return redirect()->back()->with('error', 'Gagal Menambahkan: File dengan nama tersebut sudah ada. Pilih file lain.');
+                }
+            }
             $suratKeluar->no_surat = $request->input('no_surat');
             $suratKeluar->tanggal_surat = date('d-m-Y', strtotime($request->input('tanggal_surat')));
             $suratKeluar->perihal = $request->input('perihal');
@@ -161,30 +176,12 @@ class SuratController extends Controller
             $suratKeluar->jenis_surat = $request->input('jenis_surat');
             $suratKeluar->isi_surat = $request->input('isi_surat');
     
-            // Mengambil file dari formulir
-            $file = $request->file('file');
-    
-            // Mendapatkan nama asli file
-            $filename = $file->getClientOriginalName();
-
-            $filepath = 'files/'. $filename;
-    
-            // Menyimpan file ke dalam direktori 'photos' dengan nama yang sama seperti aslinya
-            if(!Storage::disk('public')->exists($filepath)){
-                $file->storeAs('files', $filename, 'public');
-            } else if (Storage::disk('public')->exists($filepath)) {
-                // File sudah ada, berikan pemberitahuan
-                return redirect()->back()->with('error', 'Gagal Menambahkan: File dengan nama tersebut sudah ada. Pilih file lain.');
-            }
-
-            // Menyimpan nama file ke dalam database
-            $suratKeluar->file = $filename;
-    
             // Menyimpan record surat masuk ke database
             $suratKeluar->save();
     
             return redirect()->back()->with('success', 'Surat Berhasil Ditambahkan!');
         } catch (\Exception $e) {
+            dd($e->getMessage());
             // Handling error
             return redirect()->back()->with('error', 'Gagal Menambahkan: File yang diunggah harus berupa dokumen PDF!');
         }

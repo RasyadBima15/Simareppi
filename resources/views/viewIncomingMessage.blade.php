@@ -11,7 +11,7 @@
                     Back
                 </a>
             </div>
-            <div class="flex flex-col justify-center items-center pb-8 w-[85%] bg-gray-300 border border-black mt-8 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 overflow-y-auto">
+            <div class="flex flex-col justify-center items-center pb-4 w-[85%] bg-gray-300 border border-black mt-8 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 overflow-y-auto">
                 @foreach ($suratMasuk as $item)
                 <div class="flex pl-6 flex-col w-full pt-0 mb-2 border-b border-black">
                     <h5 class="mb-2 text-xl mt-2 font-semibold text-gray-900 dark:text-white">No Surat</h5>
@@ -54,7 +54,10 @@
                 </div> 
                 <div class="flex pl-6 flex-col w-full pt-0 border-black">
                     <h5 class="mb-2 text-xl font-semibold text-gray-900 dark:text-white">File Surat</h5>
-                    <embed class="pr-6 pt-2" src="{{ asset('storage/files/' . $item->file) }}" type="application/pdf" width="100%" height="500">
+                    @if ($item->file)
+                        <embed class="pr-6 pt-2" src="{{ asset('storage/files/' . $item->file) }}" type="application/pdf" width="100%" height="500">
+                    @endif
+                    <h6 class="text-xl font-semibold text-gray-900 dark:text-white">File Belum Ditambahkan.</h6>
                 </div> 
                 @endforeach
             </div>

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('kepada');
             $table->enum('jenis_surat', ['Surat Biasa', 'TR', 'Nota Dinas']);
             $table->longText('isi_surat');
-            $table->string('file');
+            $table->string('file')->nullable();
         });
     }
 

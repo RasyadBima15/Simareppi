@@ -24,7 +24,7 @@ return new class extends Migration
             $table->longText('isi_surat');
             $table->longText('disposisi_kapolda');
             $table->longText('disposisi_karo_sdm');
-            $table->string('file');
+            $table->string('file')->nullable();
         });
     }
 
